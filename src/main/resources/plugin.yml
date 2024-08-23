@@ -1,6 +1,9 @@
 name: TorosamyBind
 version: '1.0-SNAPSHOT'
 main: net.torosamy.torosamyBind.TorosamyBind
-api-version: '1.21'
-authors: [ Torosamy ]
+api-version: '1.13'
+authors: [ Torosamy,yweiyang ]
 website: https://www.torosamy.net
+depend:
+  - TorosamyCore
+  - PlaceholderAPI
