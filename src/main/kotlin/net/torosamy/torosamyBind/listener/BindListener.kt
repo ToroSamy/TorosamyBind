@@ -66,7 +66,7 @@ class BindListener : Listener {
             MessageUtil.text(
                 PlaceholderAPI.setPlaceholders(
                     player,
-                    ConfigUtil.getLangConfig().preventTake
+                    ConfigUtil.getLangConfig().preventTake.replace("{owner}", ownerName)
                 )
             )
         )
