@@ -1,0 +1,6 @@
+name: TorosamyBind
+version: '1.0-SNAPSHOT'
+main: net.torosamy.torosamyBind.TorosamyBind
+api-version: '1.21'
+authors: [ Torosamy ]
+website: https://www.torosamy.net
