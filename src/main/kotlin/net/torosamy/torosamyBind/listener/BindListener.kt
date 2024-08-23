@@ -29,10 +29,11 @@ class BindListener : Listener {
 
     @EventHandler
     fun onPickupItem(event: EntityPickupItemEvent) {
+
         val entity = event.entity
         if (entity !is Player) return
         val player = entity as Player
-
+        if (player.isOp) return
         val itemStack = event.item.itemStack
         if (itemStack.type === Material.AIR) return
 
