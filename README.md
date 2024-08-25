@@ -1,6 +1,11 @@
 ## Dependency
 - TorosamyCore
 - PlaceholderAPI
+## Function
+- Add soul binding through nbt
+- You can use commands to view the bound owner
+## FuturePlans
+- Binding and unbinding conditions
 ## Usage
 1. download [TorosamyCore](https://github.com/ToroSamy/TorosamyCore) and [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) as a dependency plugin
 2. put the **dependencies** and this plugin into your plugins folder and start your server
@@ -35,4 +40,4 @@ show-owner: "&b[服务器娘]&a该物品主人: {owner}"
 
 ## License
 
-[MIT](./LICENSE)
+[GPL-3.0 license](./LICENSE)
