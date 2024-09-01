@@ -7,12 +7,12 @@ import org.incendo.cloud.annotations.Command
 import org.incendo.cloud.annotations.CommandDescription
 import org.incendo.cloud.annotations.Permission
 
-class AdminCommans {
+class AdminCommands {
     @Command("tb reload")
     @Permission("torosamybind.reload")
     @CommandDescription("重载TorosamyBind配置文件")
     fun reloadConfig(sender: CommandSender) {
         ConfigUtil.reloadConfig()
-        sender.sendMessage(MessageUtil.text(ConfigUtil.getLangConfig().reloadMessage))
+        sender.sendMessage(MessageUtil.text(ConfigUtil.langConfig.reloadMessage))
     }
 }

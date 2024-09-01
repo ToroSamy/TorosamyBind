@@ -26,17 +26,17 @@ class PlayerCommands {
         //若为空 则说明没有人绑定 则可以绑定
         if (ownerName == "") {
             NBT.modify(itemInMainHand) {nbt -> nbt.setString("ownerName", player.name) }
-            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.getLangConfig().bindSuccess)))
+            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.bindSuccess)))
             return
         }
         //不为空则有人绑定 检测是否有人绑定
         if(player.name != ownerName) {
-            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.getLangConfig().notOwner)))
+            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.notOwner)))
             return
         }
         //没人绑定则解除绑定
         NBT.modify(itemInMainHand) {nbt->nbt.setString("ownerName", "")}
-        player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.getLangConfig().unbindSuccess)))
+        player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.unbindSuccess)))
     }
 
     @Command("tb owner", requiredSender = Player::class)
@@ -51,10 +51,10 @@ class PlayerCommands {
         var ownerName: String = ""
         NBT.get(itemInMainHand) { nbt -> ownerName = nbt.getString("ownerName") }
         if (ownerName == "") {
-            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.getLangConfig().noOwner)))
+            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.noOwner)))
             return
         }
-        player.sendMessage(MessageUtil.text(ConfigUtil.getLangConfig().showOwner.replace("{owner}", ownerName)))
+        player.sendMessage(MessageUtil.text(ConfigUtil.langConfig.showOwner.replace("{owner}", ownerName)))
     }
 
 }
