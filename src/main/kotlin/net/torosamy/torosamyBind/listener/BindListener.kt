@@ -2,7 +2,7 @@ package net.torosamy.torosamyBind.listener
 
 import me.clip.placeholderapi.PlaceholderAPI
 import net.torosamy.torosamyBind.utils.ConfigUtil
-import net.torosamy.torosamyCore.nbtapi.NBT
+import de.tr7zw.changeme.nbtapi.NBT
 import net.torosamy.torosamyCore.utils.MessageUtil
 import org.bukkit.Material
 import org.bukkit.entity.Player
