@@ -2,8 +2,10 @@ package net.torosamy.torosamyBind.commands
 
 import me.clip.placeholderapi.PlaceholderAPI
 import net.torosamy.torosamyBind.utils.ConfigUtil
-import de.tr7zw.changeme.nbtapi.NBT
+import net.torosamy.torosamyBind.utils.ListenerUtil
+import net.torosamy.torosamyBind.utils.ListenerUtil.Companion.OWNER_NAME_KEY
 import net.torosamy.torosamyCore.utils.MessageUtil
+import net.torosamy.torosamyCore.utils.NbtUtil
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -21,11 +23,12 @@ class PlayerCommands {
         val itemInMainHand = player.inventory.itemInMainHand
         if (itemInMainHand.type == Material.AIR) return
 
-        var ownerName: String = ""
-        NBT.get(itemInMainHand) { nbt -> ownerName = nbt.getString("ownerName") }
+        val ownerName: String? = NbtUtil.getString(itemInMainHand, OWNER_NAME_KEY);
+
         //若为空 则说明没有人绑定 则可以绑定
-        if (ownerName == "") {
-            NBT.modify(itemInMainHand) {nbt -> nbt.setString("ownerName", player.name) }
+        if (ownerName.isNullOrEmpty()) {
+            NbtUtil.setString(itemInMainHand, OWNER_NAME_KEY, player.name)
+
             player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.bindSuccess)))
             return
         }
@@ -35,7 +38,7 @@ class PlayerCommands {
             return
         }
         //没人绑定则解除绑定
-        NBT.modify(itemInMainHand) {nbt->nbt.setString("ownerName", "")}
+        NbtUtil.setString(itemInMainHand, OWNER_NAME_KEY, "")
         player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.unbindSuccess)))
     }
 
@@ -48,9 +51,9 @@ class PlayerCommands {
         val itemInMainHand = player.inventory.itemInMainHand
         if (itemInMainHand.type == Material.AIR) return
 
-        var ownerName: String = ""
-        NBT.get(itemInMainHand) { nbt -> ownerName = nbt.getString("ownerName") }
-        if (ownerName == "") {
+        val ownerName: String? = NbtUtil.getString(itemInMainHand, OWNER_NAME_KEY);
+
+        if (ownerName.isNullOrEmpty()) {
             player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.noOwner)))
             return
         }

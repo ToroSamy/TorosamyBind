@@ -7,7 +7,6 @@ import net.torosamy.torosamyCore.utils.MessageUtil
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
-
 class TorosamyBind : JavaPlugin() {
     companion object{lateinit var plugin: TorosamyBind}
     override fun onEnable() {
