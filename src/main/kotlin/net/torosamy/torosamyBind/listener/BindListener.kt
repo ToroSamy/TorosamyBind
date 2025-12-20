@@ -1,48 +1,65 @@
 package net.torosamy.torosamyBind.listener
 
-import me.clip.placeholderapi.PlaceholderAPI
+
+import net.torosamy.torosamyBind.api.TorosamyBindAPI
 import net.torosamy.torosamyBind.utils.ConfigUtil
-import net.torosamy.torosamyBind.utils.ListenerUtil.Companion.OWNER_NAME_KEY
 import net.torosamy.torosamyCore.utils.MessageUtil
-import net.torosamy.torosamyCore.utils.NbtUtil
 import org.bukkit.Material
+import org.bukkit.entity.ArmorStand
+import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
+
+
 class BindListener : Listener {
     @EventHandler
     fun onDropItem(event: PlayerDropItemEvent) {
         val itemStack = event.itemDrop.itemStack
+        
         if (itemStack.type === Material.AIR) return
 
-        val ownerName: String? = NbtUtil.getString(itemStack, OWNER_NAME_KEY);
-
-        if (ownerName.isNullOrEmpty()) return
-
-        if (event.player.name != ownerName) return
+        if (!TorosamyBindAPI.hasOwner(itemStack)) {
+            return
+        }
+        
+        if (event.player.name != TorosamyBindAPI.getOwner(itemStack)) {
+            return
+        }
+        
         event.isCancelled = true
     }
 
 
     @EventHandler
     fun onPickupItem(event: EntityPickupItemEvent) {
-
         val entity = event.entity
-        if (entity !is Player) return
-        val player = entity
-        if (player.isOp) return
+        
+        if (entity !is Player) {
+            return
+        }
+        
+        if (entity.isOp) {
+            return
+        }
+        
         val itemStack = event.item.itemStack
+        
         if (itemStack.type === Material.AIR) return
 
-        val ownerName: String? = NbtUtil.getString(itemStack, OWNER_NAME_KEY);
+        if (!TorosamyBindAPI.hasOwner(itemStack)) {
+            return
+        }
 
-        if (ownerName.isNullOrEmpty()) return
-
-        if (player.name == ownerName) return
-
+        if (entity.name == TorosamyBindAPI.getOwner(itemStack)) {
+            return
+        }
+        
         event.isCancelled = true
     }
 
@@ -51,25 +68,68 @@ class BindListener : Listener {
         if (event.whoClicked !is Player) return
         val player = event.whoClicked as Player
         if (player.isOp) return
-        val item = event.currentItem
-        if (item == null) return
+        val item = event.currentItem ?: return
         if (item.type === Material.AIR) return
 
-        val ownerName: String = NbtUtil.getString(item, OWNER_NAME_KEY) ?: return;
 
-        if (ownerName.isEmpty()) return
+        if (!TorosamyBindAPI.hasOwner(item)) {
+            return
+        }
 
-        if (player.name == ownerName) return
+        val ownerName = TorosamyBindAPI.getOwner(item)
+        
+        if (player.name == ownerName) {
+            return
+        }
 
-
-        player.sendMessage(
-            MessageUtil.text(
-                PlaceholderAPI.setPlaceholders(
-                    player,
-                    ConfigUtil.langConfig.preventTake.replace("{owner}", ownerName)
-                )
-            )
-        )
+        player.sendMessage(MessageUtil.format(player,ConfigUtil.langConfig.notOwner))
         event.isCancelled = true
+    }
+
+
+    @EventHandler
+    fun onPlayerInteractEntity(event: PlayerInteractEntityEvent) {
+        val player = event.player
+
+        if (!preventInteractArmorStand(event.rightClicked, player)) {
+            return
+        }
+
+        player.sendMessage(MessageUtil.format(player, ConfigUtil.langConfig.notOwner))
+
+        event.isCancelled = true
+    }
+
+    @EventHandler
+    fun onPlayerInteractAtEntity(event: PlayerInteractAtEntityEvent) {
+        val player = event.player
+        
+        if (!preventInteractArmorStand(event.rightClicked, player)) {
+            return
+        }
+
+        player.sendMessage(MessageUtil.format(event.player, ConfigUtil.langConfig.notOwner))
+
+        event.isCancelled = true
+    }
+    
+    private fun preventInteractArmorStand(entity: Entity, player: Player): Boolean {
+        if (entity !is ArmorStand) {
+            return false
+        }
+
+        if (player.isOp) {
+            return false
+        }
+
+        val item = player.equipment.itemInMainHand
+
+        if (item.type === Material.AIR) return false
+
+        if (!TorosamyBindAPI.hasOwner(item)) {
+            return false
+        }
+        
+        return true
     }
 }

@@ -1,9 +1,8 @@
 package net.torosamy.torosamyBind.commands
 
-import me.clip.placeholderapi.PlaceholderAPI
+import net.torosamy.torosamyBind.api.TorosamyBindAPI
 import net.torosamy.torosamyBind.utils.ConfigUtil
-import net.torosamy.torosamyBind.utils.ListenerUtil
-import net.torosamy.torosamyBind.utils.ListenerUtil.Companion.OWNER_NAME_KEY
+import net.torosamy.torosamyCore.TorosamyCore
 import net.torosamy.torosamyCore.utils.MessageUtil
 import net.torosamy.torosamyCore.utils.NbtUtil
 import org.bukkit.Material
@@ -21,25 +20,26 @@ class PlayerCommands {
         val player = sender as Player
 
         val itemInMainHand = player.inventory.itemInMainHand
+        
         if (itemInMainHand.type == Material.AIR) return
 
-        val ownerName: String? = NbtUtil.getString(itemInMainHand, OWNER_NAME_KEY);
+        if (!TorosamyBindAPI.hasOwner(itemInMainHand)) {
+            TorosamyBindAPI.bind(itemInMainHand, player)
 
-        //若为空 则说明没有人绑定 则可以绑定
-        if (ownerName.isNullOrEmpty()) {
-            NbtUtil.setString(itemInMainHand, OWNER_NAME_KEY, player.name)
-
-            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.bindSuccess)))
+            player.sendMessage(MessageUtil.format(player,ConfigUtil.langConfig.bindSuccess))
             return
         }
-        //不为空则有人绑定 检测是否有人绑定
+
+        val ownerName = TorosamyBindAPI.getOwner(itemInMainHand)
+        
         if(player.name != ownerName) {
-            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.notOwner)))
+            player.sendMessage(MessageUtil.format(player,ConfigUtil.langConfig.notOwner))
             return
         }
-        //没人绑定则解除绑定
-        NbtUtil.setString(itemInMainHand, OWNER_NAME_KEY, "")
-        player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.unbindSuccess)))
+        
+        TorosamyBindAPI.unbind(itemInMainHand)
+        
+        player.sendMessage(MessageUtil.format(player,ConfigUtil.langConfig.unbindSuccess))
     }
 
     @Command("tb owner", requiredSender = Player::class)
@@ -49,15 +49,18 @@ class PlayerCommands {
         val player = sender as Player
 
         val itemInMainHand = player.inventory.itemInMainHand
+        
         if (itemInMainHand.type == Material.AIR) return
 
-        val ownerName: String? = NbtUtil.getString(itemInMainHand, OWNER_NAME_KEY);
-
-        if (ownerName.isNullOrEmpty()) {
-            player.sendMessage(MessageUtil.text(PlaceholderAPI.setPlaceholders(player,ConfigUtil.langConfig.noOwner)))
+        if (!TorosamyBindAPI.hasOwner(itemInMainHand)) {
+            player.sendMessage(MessageUtil.format(player,ConfigUtil.langConfig.noOwner))
             return
         }
-        player.sendMessage(MessageUtil.text(ConfigUtil.langConfig.showOwner.replace("{owner}", ownerName)))
+
+        val ownerName = TorosamyBindAPI.getOwner(itemInMainHand)
+
+
+        player.sendMessage(MessageUtil.format(ConfigUtil.langConfig.showOwner.replace("{owner}", ownerName)))
     }
 
 }

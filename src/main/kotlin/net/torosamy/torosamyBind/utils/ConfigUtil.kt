@@ -1,21 +1,31 @@
 package net.torosamy.torosamyBind.utils
 
 import net.torosamy.torosamyBind.TorosamyBind
-import net.torosamy.torosamyCore.manager.ConfigManager
 import net.torosamy.torosamyBind.config.LangConfig
+import net.torosamy.torosamyCore.config.Config
+import net.torosamy.torosamyCore.config.ConfigFile
 
 
 class ConfigUtil {
     companion object {
-        var langConfig: LangConfig = LangConfig()
-        private var langConfigManager: ConfigManager = ConfigManager(langConfig, TorosamyBind.plugin, "", "lang.yml")
+        private val configs: ArrayList<Config> = ArrayList()
+        
+        public var langConfig: LangConfig = LangConfig()
+
+        fun initConfig() {
+            configs.add(Config(langConfig, ConfigFile(TorosamyBind.plugin,"lang.yml")))
+        }
 
         fun reloadConfig() {
-            langConfigManager.load()
+            for (config in configs) {
+                config.load()
+            }
         }
 
         fun saveConfig() {
-            langConfigManager.save()
+            for (config in configs) {
+                config.save()
+            }
         }
     }
 }
