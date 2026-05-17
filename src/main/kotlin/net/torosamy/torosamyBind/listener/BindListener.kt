@@ -121,8 +121,7 @@ class BindListener : Listener {
         if (player.isOp) {
             return false
         }
-
-        val item = player.equipment.itemInMainHand
+        val item = player.inventory.itemInMainHand
 
         if (item.type === Material.AIR) return false
 
